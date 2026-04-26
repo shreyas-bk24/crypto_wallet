@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"go-crypto-wallet/config"
 	"go-crypto-wallet/internal/handlers"
@@ -52,7 +53,10 @@ func setupRouter(walletHandler *handlers.WalletHandler) *gin.Engine {
 	router := gin.New()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://crypto-wallet-frontend-peach.vercel.app"},
+		AllowOriginFunc: func(origin string) bool {
+			return strings.Contains(origin, "vercel.app") ||
+				origin == "http://localhost:3000"
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
